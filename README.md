@@ -1,14 +1,16 @@
-# Photo Selection Assistant Backend
+# Photo Selection Assistant
 
-**What this backend does:**
-This is the "brain" for your photo selection tool. It provides a database to store which clients are selecting which photos, and it creates simple "API" endpoints. Later, your local helper script will send photo details to these endpoints, and your frontend website will fetch the photos to show to clients. Finally, another local script uses this backend to figure out which RAW files the client selected so it can copy them.
+**What this app does:**
+This is a full-stack Next.js application that helps photographers share photo galleries with clients and lets clients select their favorite photos. It features a sleek Photographer Dashboard to manage shoots, and a beautiful Pinterest-style Client Gallery for photo selection. 
+
+It connects to your local machine via helper scripts to eventually copy the heavy RAW files based on client selections.
 
 ## Prerequisites
 
 Before running this, you will need:
 1. A **GitHub account** (to store your code).
-2. A **Supabase account** (this is your free database).
-3. A **Google account** (for Google Drive, which we will connect later).
+2. A **Supabase account** (this is your free database and authentication).
+3. A **Google account** (for Google Drive, which we will connect later for photo previews).
 
 ---
 
@@ -18,9 +20,8 @@ Supabase is where your database lives.
 
 1. Go to [supabase.com](https://supabase.com) and create a free project.
 2. In your Supabase dashboard, go to the **SQL Editor** (the `</>` icon on the left menu).
-3. Click "New Query".
-4. Open the `supabase/schema.sql` file in this project, copy all the text inside it, and paste it into the Supabase SQL Editor.
-5. Click **Run**. This creates all the necessary tables (photographers, jobs, photos, selections) in your database!
+3. Open the `supabase/schema.sql` file in this project, copy all the text inside it, and paste it into the Supabase SQL Editor.
+4. Click **Run**. This creates all the necessary tables (photographers, jobs, photos, selections) in your database!
 
 ---
 
@@ -41,7 +42,7 @@ Your code needs to know how to connect to *your* specific Supabase project.
 
 ## Step 3: Run Locally
 
-To start the backend server on your computer:
+To start the full web application on your computer:
 
 1. Open your terminal in this folder (`photo-selection-assistant-backend`).
 2. Run this command to install the required packages (you only do this once):
@@ -53,18 +54,24 @@ To start the backend server on your computer:
    npm run dev
    ```
 
-Your backend is now running at `http://localhost:3000`!
+Your app is now running at `http://localhost:3000`!
 
 ---
 
-## Step 4: How the local helper scripts will work (conceptual)
+## The Workflow
 
-Inside the `scripts/` folder, there are scripts meant to be run directly on your Mac.
+**1. Photographer Dashboard**
+- Go to `http://localhost:3000/login` to sign in.
+- Create a new "Job" with your client's name and email.
+- You will receive a unique "Magic Link" to send to your client.
 
-- **`list-selected-raws.ts`**: When a client finishes selecting photos, you can run this script and give it the `job_id`. It will talk to Supabase, find out exactly which photos the client selected, and print out their original RAW file paths on your computer.
-- **`copy-selected-raws.ts`**: (Coming soon!) This script will take those RAW file paths and automatically copy the heavy RAW files into a new folder for you to edit in Lightroom/Capture One.
+**2. Client Gallery**
+- Your client opens the Magic Link.
+- They see a beautiful Pinterest-style grid of their photos.
+- They can click photos to expand them into a lightbox and click "Select" or the heart icon.
+- Selections are saved automatically.
 
-To run a script, you can use a command like this:
-```bash
-npx ts-node scripts/list-selected-raws.ts <paste-the-job-id-here>
-```
+**3. Exporting RAWs**
+- Once the client finishes, go to the Job details in your dashboard.
+- You will see exactly how many photos they selected and a simple terminal command.
+- Open your terminal and run the provided command (e.g. `npx ts-node scripts/list-selected-raws.ts`) to locate and extract those specific RAW files on your Mac!
